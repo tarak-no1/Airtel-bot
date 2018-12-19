@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script>ejs_data ="<%=source%>";</script>
+    <title>Plan Details</title>
+<style>
+    .table{
+        table-layout: fixed;
+    word-wrap: break-word;
+        
+        
+    }   
+    body{
+        
+    }
+    td{
+        padding: 3vh !important
+    }
+    
+
+@media (max-width: @screen-lg) {
+    .fonts{font-size: 2em;}
+}
+
+    @media (max-width: @screen-md) {
+    .fonts{font-size: 2em;}
+}
+
+    @media (max-width: @screen-sm) {
+    .fonts{font-size: 2em;}
+}
+
+@media (max-width: @screen-xs) {
+    .fonts{font-size:2em;}
+}
+</style>
+<body>
+
+    <div ng-app="myApp" ng-controller="Airtel">
+        <section class="">
+            <div>
+                <div class="">
+                    <div class="row">
+                        <div class="col-xs-12 visible-lg  visible-md  visible-sm  visible-xs " 
+                             ng-style="isMobile? { 'font-size':'3em'} : {'font-size':'1em'}">
+                               <table class="table table-bordered table-striped table-responsive table-fixed">
+                                   <tbody>
+                                    <tr>
+                                        <td style="padding: 3vh"><span  style="text-transform:capitalize">{{PlansDetails[0].plan_name}}</span>
+                                        </td>   
+                                        <td>
+                                            <div><span data-i18n="rs|399" module-id="common">Rs {{ plan.price }}</span></div>
+                                        </td>   
+                                    </tr>
+                                    <tr>
+                                        <td><div data-i18n="local_std_calls" module-id="postpaid">Local + STD Calls</div></td>   
+                                        <td>
+                                                 <div>
+                                                    <span ng-if="plan.local_std_calls >= 200000">Unlimited</span>
+                                                        <span ng-if="plan.local_std_calls < 200000">{{plan.local_std_calls}} MINS</span>
+                                                    </div>
+                                        </td>   
+                                    </tr>
+                                    <tr ng-if="plan.roaming_incoming != 'na' ">
+                                        <td > <div >Roaming Incoming Calls</div></td>   
+                                        <td>
+                                            <div >
+                                                <span ng-if="plan.roaming_incoming >= 999999999999999">Unlimited</span>
+                                                <span ng-if="plan.roaming_incoming != 999999999999999">{{plan.roaming_incoming}} MINS</span>
+                                            </div>
+                                        </td>   
+                                    </tr>
+                                    <tr ng-if="plan.roaming_incoming  != 'na' ">
+                                        <td> <div>Roaming Outgoing Calls</div></td>   
+                                        <td>
+                                                <div>
+                                                    <span ng-if="plan.roaming_outgoing >= 999999999999999">Unlimited</span>
+                                                <span ng-if="plan.roaming_outgoing != 999999999999999">{{plan.roaming_outgoing}} MINS</span>
+                                                </div>
+                                        </td>   
+                                    </tr>
+                                    <tr>
+                                        <td><div>3G/4G Data</div></td>   
+                                        <td>
+                                             <div><span>{{ plan['4g_3g_data']  }} GB</span></div>
+                                        </td>   
+                                    </tr>
+                                   </tbody>
+                               </table>
+                        </div>
+                    
+                    </div>
+                </div>
+            </article>
+            <!-- City select Popup -->
+        </section>
+    </div>
+</body>
+    
+<script>
+    function isMobile() {
+          try{ document.createEvent("TouchEvent"); return true; }
+          catch(e){ return false; }
+    }
+   isMobile = (isMobile())
+angular.module('myApp', []).controller('Airtel', function($scope) {
+    var source_data = window.ejs_data;
+    $scope.isMobile = window.isMobile;
+    source_data = source_data.split("&#34;").join('"');
+    source_data = JSON.parse(source_data);
+    $scope.PlansDetails = [source_data]
+    $scope.plan = $scope.PlansDetails[0];
+    console.log($scope.PlansDetails)
+    
+    
+});
+</script>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Customize your plan</title>
+</head>
+<body>
+
+</body>
+</html><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="https://rawgit.com/rzajac/angularjs-slider/master/dist/rzslider.css">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script>ejs_data ="<%=source%>";</script>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family:'Open Sans', sans-serif;
+    color: #1f2636;
+    font-size: 14px;
+    padding-bottom: 40px;
+}
+    .row{
+        
+        width: 110% !important;
+    }
+    .container{
+        
+    padding: 0 !important;
+    margin: 0 !important;
+    }
+header {
+    background: #e40000;
+    color: #fff;
+    margin: -40px;
+    margin-bottom: 40px;
+    text-align: center;
+    padding: 40px 0;
+}
+.rzslider .rz-pointer{
+  background-color:red
+}
+h1 {
+    font-weight: 300;
+}
+h2 {
+    margin-bottom:10px;
+}
+.rzslider .rz-pointer.rz-active:after{
+    background:white;
+  
+}
+.rz-pointer-min{
+  outline:none;
+}
+.rzslider{
+  margin: 10px 0 15px 0 !important;
+}
+.rz-floor,.rz-ceil,.rz-model-value{
+  display:none !important
+}
+.rzslider .rz-pointer:after{
+  background:white;
+}
+.wrapper {
+    background: #fff;
+    padding: 40px;
+}
+article {
+    margin-bottom: 10px;
+}
+.tab-pane {
+    padding-top: 10px;
+}
+.field-title {
+    width: 100px;
+}
+.vertical-sliders {
+    margin: 0;
+}
+.vertical-sliders > div {
+    height: 250px;
+}
+    .mobile_font{
+        font-size:3em
+    }
+    .web-font{
+        
+        font-size:1.3em
+    }
+    .blink_me {
+  animation: blinker 1s linear infinite;
+        margin-top: 3%;
+}
+
+@keyframes blinker {  
+  50% { opacity: 0; }
+}
+    .closed{
+        
+    }
+    .display-block{
+        display:block !important;
+    }
+    .display-none{
+        display:none !important;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.js"></script>
+<script src="https://rawgit.com/rzajac/angularjs-slider/master/dist/rzslider.js"></script>
+<div ng-app="rzSliderDemo" ng-controller="MainCtrl" >
+   
+    <div class="wrapper" style="margin-left:2%">
+        
+        <div ng-class="isMobile ? 'mobile_font' : 'web_font'">
+           
+             <div style="color:red;white-space:nowrap;text-transform:capitalize;margin-bottom: 6%;" class="text-center">
+                    {{Price_plans[index].price}} - {{Price_plans[index].plan_name}}
+            </div>
+           <div class="container">
+              <div class="row">
+                  <div class="col-xs-6 text-left">
+                  {{Price_plans[index].data}} GB
+                  </div>
+                  <div ng-if="Price_plans[index].local_min != 200000 " class="col-xs-6 text-right" sstyle="padding:0;margin:0">
+                  {{Price_plans[index].local_min}} MIN
+                  </div>
+                  <div ng-if="Price_plans[index].local_min == 200000 " class="col-xs-6 text-right">
+                  Unlimited
+                  </div>
+              </div>
+            </div>
+            <rzslider ng-style="isMobile? { 'width':'90%'} : {'':''}" rz-slider-model="slider_visible_bar.value" rz-slider-options="slider_visible_bar.options"></rzslider>
+             <div class="container">
+              <div class="row">
+                  <div class="col-xs-6 text-left">
+                  4G/3G Internet
+                  </div>
+                  <div class="col-xs-6 text-right" sstyle="padding:0;margin:0">
+                  Local & STD Calls
+                  </div>
+              </div>
+            </div>
+        </div>
+        <div class="container">
+                <div class="row">
+                    <div class="col-xs-5" style="margin-top:7%" ng-class="isMobile ? 'col-xs-offset-4' : 'col-xs-offset-3'">
+            <button ng-click="send_id()" class="btn btn-danger btn-block " ng-class="isMobile ? 'mobile_font' : 'web_font'">
+                            Apply Changes
+                        </button>
+                    </div>
+                </div>
+             
+        </div>
+         <div ng-if="isApplied" class="container">
+                <div class="row">
+                    <div class="col-xs-5" style="margin-top:3%" ng-class="isMobile ? 'col-xs-offset-4' : 'col-xs-offset-3'">
+            <button  class="btn btn-danger btn-block closed text-center blink_me" style="font-weight:bold;border:none;background:white;color:red;padding:0" ng-class="isMobile ? 'mobile_font' : 'web_font'">
+                            Close this window.
+                        </button>
+                    </div>
+                </div>
+             
+        </div>
+  
+   
+    </div>
+</div>
+<script>
+    
+      function isMobile() {
+          try{ document.createEvent("TouchEvent"); return true; }
+          catch(e){ return false; }
+    }
+   isMobile = (isMobile())
+    
+var app = angular.module('rzSliderDemo', ['rzModule', 'ui.bootstrap']);
+
+app.controller('MainCtrl', function ($scope, $rootScope, $timeout, $modal,$http) {
+    //Minimal slider config
+   $scope.isMobile = window.isMobile;
+      var info = 1;
+      var source_data = window.ejs_data;
+      source_data = source_data.split("&#34;").join('"');
+      source_data = JSON.parse(source_data);
+      $scope.Price_plans = source_data;
+ 
+    console.log('data ',$scope.Price_plans)
+
+$scope.default_value = 0;
+for(x in $scope.Price_plans){	
+    if($scope.Price_plans[x].default_status){
+    $scope.default_value = (x);
+    break;
+    }
+}
+  $scope.isApplied = 0;
+    $scope.send_id = function(){    
+        $scope.isApplied = 1;
+        console.log('sending id is : ',$scope.Price_plans[$scope.index]['plan_id'])
+    var sending_data = { 'plan_id' : $scope.Price_plans[$scope.index]['plan_id'],'user_id' : $scope.Price_plans[$scope.index]['user_id'] }
+    console.log('data sent > ', sending_data)
+        $http({ url: 'https://www.prodx.in/airtel_bot/apply-plan',
+        method: "POST",
+        data: sending_data
+                    })
+                    .then(function(response) {
+                           console.log(response)
+                            
+                    }, 
+                    function(response) { // optional
+                          console.log('failed')
+               });
+        
+    }
+$scope.default_value = $scope.default_value;
+    //Slider with selection bar
+    $scope.slider_visible_bar = {
+        value:$scope.default_value,
+        options: {
+         ceil: $scope.Price_plans.length-1,
+            floor: 0,
+            showSelectionBar: true,
+              getSelectionBarColor: function(value) {
+        			$scope.index = value;
+              return 'red'
+              
+        }
+        }
+    };
+});
+</script>
